@@ -1,7 +1,8 @@
 # THIS IS MY AWESOME PROJECT
+Author: Yingjian Song
 Introduction:
 My project aim to predict the 18-19 regular season MVP(most valuable player) of NBA (hopefully I can get it done)
-Author: Yingjian Song
+
 Proposal:
 This project basically consists of 5 steps:
 1. Collecting data from Basketball Reference website and choose data which matters mvp evaluation of some competitive candidate of mvp in past ten years.
