@@ -1,0 +1,106 @@
+from __future__ import print_function
+import tensorflow as tf
+import numpy as np
+import pandas as pd
+#read data
+data = pd.read_csv('1-14.csv')
+data1 = data.iloc[0:134,2:16]
+#data normalizaion
+data_norm=(data1-data1.min())/(data1.max()-data1.min())
+# make result
+mvp_share= data_norm[['Share']]
+#reshape data
+data_new=data_norm.iloc[0:134,0:13]
+
+#define input and output data
+input_data = tf.placeholder(tf.float32,[None,13],name='input')
+output_data = tf.placeholder(tf.float32,[None,1],name='output')
+##### construct nerual network layer(3 layers total)
+#define input layer
+def input_layer(init_input,input_size0,output_size0):
+
+    w0=tf.Variable(tf.random_normal([input_size0,output_size0]))####define weights of input data
+    b0 = tf.Variable(tf.zeros([output_size0])+0.1)#######define bias of input data
+    input0= tf.matmul(tf.cast(init_input,tf.float32),w0)+b0##########no activation function needed in input
+    return input0
+#define hidden layer
+def hidden_layer(input0, input_size, output_size):
+    input1=tf.sigmoid(input0)
+    w=tf.Variable(tf.random_normal([input_size,output_size]))########define weights for hidden layer
+    b=tf.Variable(tf.zeros([output_size])+0.1)########define bias for hidden layer
+    input=tf.matmul(input1, w)+b##############use sigmoid as activation function
+    return input
+#define output layer
+def output_layer(input):
+    output=tf.sigmoid(input)
+    return output
+#input data
+l_input=input_layer(input_data,13,30)
+l_hidden=hidden_layer(l_input,30,1)
+l_output=output_layer(l_hidden)
+#calculate error
+loss = tf.reduce_mean(tf.square(output_data - l_output))
+train_optimizer= tf.train.GradientDescentOptimizer(0.96).minimize(loss)
+#initialize variable
+init = tf.global_variables_initializer()
+sess=tf.Session()
+sess.run(init)
+
+#traning
+for i in range(10000):
+    sess.run(train_optimizer,feed_dict={input_data : data_new, output_data : mvp_share})
+    if i%100==0:
+        print(sess.run(loss, feed_dict={input_data:data_new, output_data : mvp_share}))
+#######test
+#####reshape data to get inputdata of test
+#1
+test=pd.read_csv('14.csv')
+test1 = test.iloc[0:10,2:16]
+test_norm=(test1-test1.min())/(test1.max()-test1.min())
+test_mvp= test_norm[['Share']]
+test_input=test_norm.iloc[0:10,0:13]
+####begain test1
+print('result1: ')
+print(sess.run(l_output,feed_dict={input_data:test_input}))
+#2
+test15=pd.read_csv('15.csv')
+test15_reshape = test15.iloc[0:12,2:16]
+test15_norm=(test15_reshape-test15_reshape.min())/(test15_reshape.max()-test15_reshape.min())
+test15_mvp= test15_norm[['Share']]
+test15_input=test15_norm.iloc[0:12,0:13]
+#######begin test2
+print('result2: ')
+print(sess.run(l_output,feed_dict={input_data:test15_input}))
+#3
+test16=pd.read_csv('16.csv')
+test16_reshape = test16.iloc[0:12,2:16]
+test16_norm=(test16_reshape-test16_reshape.min())/(test16_reshape.max()-test16_reshape.min())
+test16_mvp= test16_norm[['Share']]
+test16_input=test16_norm.iloc[0:12,0:13]
+#######begin test3
+print('result3: ')
+print(sess.run(l_output,feed_dict={input_data:test16_input}))
+#4
+test17=pd.read_csv('17.csv')
+test17_reshape = test17.iloc[0:10,2:16]
+test17_norm=(test17_reshape-test17_reshape.min())/(test17_reshape.max()-test17_reshape.min())
+test17_mvp= test17_norm[['Share']]
+test17_input=test17_norm.iloc[0:10,0:13]
+#######begin test4
+print('result4: ')
+print(sess.run(l_output,feed_dict={input_data:test17_input}))
+#5
+test18=pd.read_csv('18.csv')
+test18_reshape = test18.iloc[0:10,2:16]
+test18_norm=(test18_reshape-test18_reshape.min())/(test18_reshape.max()-test18_reshape.min())
+test18_mvp= test18_norm[['Share']]
+test18_input=test18_norm.iloc[0:10,0:13]
+#######begin test5
+print('result5: ')
+print(sess.run(l_output,feed_dict={input_data:test18_input}))
+##########make prediction
+pred_data=pd.read_csv('1.csv')
+pred_data1 = pred_data.iloc[0:5,2:15]
+pred_norm=(pred_data1-pred_data1.min())/(pred_data1.max()-pred_data1.min())
+print('prediction: ')
+print(sess.run(l_output,feed_dict={input_data:pred_norm}))
