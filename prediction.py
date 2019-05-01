@@ -18,7 +18,5 @@ output=tf.matmul(tf.matmul(input, w1)+b1,w2)+b2
 pred_data=pd.read_csv('1.csv')
 pred_data1 = pred_data.iloc[0:5,2:13]
 pred_norm=(pred_data1-pred_data1.min())/(pred_data1.max()-pred_data1.min())
-
-#######begin test5
 print('prediction: ')
 print(sess.run(output,feed_dict={input:pred_norm}))
